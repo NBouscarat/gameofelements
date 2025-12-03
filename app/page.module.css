@@ -1,0 +1,356 @@
+
+html{
+  font-size: 0.8vw;
+}
+body{
+  --shadow:0 0px 2px rgba(0, 0, 0, 0.1);
+  --shadowHover: 0 5px 12px rgba(0, 0, 0, 0.2);
+  --textColor:#666666;
+  --textColorAlt:#ddd;
+  --titleColorDiscrete:#aaa;
+  --titleColorSelected:#28c1ef;
+  --background:#ffffff;
+  background: #efefef;
+  /* Define REM value*/
+  
+}
+.page {
+  display: flex;
+  /** DEFINE VARIABLES FOR LIGHT THEME **/
+  
+  --border-default:1px solid #e0e0e0;
+
+  padding: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .page {
+    /** DEFINE VARIABLES FOR DARK THEME **/
+    
+
+  }
+}
+
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  grid-column-gap: 1px;
+  grid-row-gap: 1px; 
+  width: calc(100% - 40px);
+  height: calc(100vh - 40px);
+  border: var(--border-default);
+  background:#ddd;
+  position: absolute;
+  top: 20px;
+  left:20px;
+}
+.gridItem{
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 5;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+.gridItem:hover{
+  box-shadow: var(--shadowHover);
+  z-index: 10;
+  transform: translateY(-5px);
+  
+}
+.emptyCell{
+  background: #fff;
+  transition: all 0.5s ease;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+.emptyCellExpanded{
+  background: #fff;
+  transition: all 0.5s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 19;
+  cursor: pointer;
+  grid-area: 1/1/11/19 !important;
+}
+.emptyCell:hover{
+  box-shadow: var(--shadowHover);
+  z-index: 10;
+  transform: translateY(-5px);
+}
+.popUpOverlay{
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 20;
+}
+.popUp{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 600px;
+  z-index: 21;
+  color: var(--textColor);
+}
+.popUp h2{
+  margin-top: 0;
+  padding: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  border-bottom: var(--border-default);
+}
+.popUp h2 span{
+  text-transform: none;
+  font-size: 0.6rem;
+}
+.popUp form{
+  display: flex;
+  flex-direction: column;
+}
+.popUp form .formRow{
+  position: relative;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+}
+
+.popUp form span{
+  flex: 1;
+}
+.popUp label{
+  font-size: 0.7rem;
+  position: absolute;
+  display: block;
+  top: -10px;
+  left: 10px;
+  padding: 0 10px;
+  background: #fff;
+}
+.popUp input, .popUp textarea{
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: var(--border-default);
+  border-radius: 5px;
+  font-size: 0.8rem;
+}
+.popUp input[type="checkbox"]{
+  width: auto;
+  padding: 10px;
+  margin: 0 20px;
+  border: var(--border-default);
+  border-radius: 5px;
+  font-size: 0.8rem;
+}
+
+.toggleBtn{
+  padding: 0;
+  border: var(--border-default);
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.6rem;
+  align-self: flex-end;
+  display: flex;
+  overflow: hidden;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+.toggleBtn span{
+  display: flex;
+  padding: 5px 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.toggleBtn .tglInactive{
+  color: var(--textColor);
+  background: #bdbdbd;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+}
+.toggleBtn .tglActive{
+  box-shadow: inset 0 -2px 5px rgba(0,0,0,0.2);
+  color: var(--titleColorSelected);
+  
+}
+.colorPicker{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 10px;
+}
+.colorPicker span{
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: var(--border-default);
+}
+
+.card{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  padding: 10px;
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
+}
+.gridItem.expanded{
+  z-index: 40;
+}
+.card .atomicNumber{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: none;
+  padding: 3px 5px;
+  font-size: 0.6rem;
+  border-radius: 20px;
+  font-weight: bold;
+}
+.card h3{
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+.card h4{
+  font-size: 0.6rem;
+}
+
+
+.cardDetails{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  flex: 1;
+}
+.cardHeader .atomicNumber{
+  position: relative;
+  font-size: 2rem;
+  margin: 5px;
+  padding: 0;
+  top: 0;
+  left: 0;
+}
+.cardHeader{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #aaa;
+}
+.cardHeader h3,.cardHeader h4{
+  font-size: 2rem;
+  margin: 5px;
+}
+.cardHeader h3{
+  flex: 1;
+  text-align: left;
+}
+.cardContent{
+  flex: 1;
+  text-align: left;
+  background: var(--background);
+  padding: 20px;
+  color: var(--textColor);
+}
+
+.iconBTN{
+  background: #666666;
+  cursor: pointer;
+  padding: 10px;
+  margin: 10px 10px;
+  border-radius: 5px;
+  color: var(--textColorAlt);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1/1;
+}
+
+.btn{
+  background: var(--btnColor,#5aaf72);
+  cursor: pointer;
+  padding: 10px;
+  margin: 10px 10px;
+  border-radius: 5px;
+  color: var(--btnTextColor,#fff);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+
+
+/*****************************************************
+  COLORS 
+******************************************************/
+
+.color1{
+  background: rgb(201, 227, 243);
+  color:rgb(13, 132, 206);
+}
+.color2{
+  background: rgb(219, 248, 255);
+  color:#00758C;
+}
+.color3{
+  background: rgb(255, 235, 235);
+  color:rgb(214, 0, 36);
+}
+.color4{
+  background: rgb(245, 236, 253);
+  color:rgb(98, 50, 236);
+}
+.color5{
+  background: rgb(230, 245, 255);
+  color:rgb(0, 51, 85);
+}
+.color6{
+  background: rgb(255, 234, 219);
+  color:rgb(199, 50, 0);
+}
+.color7{
+  background: rgb(233, 233, 236);
+  color:rgb(63, 55, 79);
+}
+.color8{
+  background: rgb(220, 250, 235);
+  color:rgb(0, 44, 0);
+}
+.color9{
+  background: rgb(254, 249, 230);
+  color:rgb(148, 87, 0);
+}
+.color10{
+  background: rgb(255, 235, 238);
+  color:rgb(205, 29, 94);
+}
