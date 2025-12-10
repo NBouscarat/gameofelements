@@ -47,12 +47,12 @@ export default function Card({ route,element,gridPosition}: { route?: string; el
                         <span className={language==="lu"? styles.tglActive:styles.tglInactive} onClick={()=>setLanguage("lu")}>LU</span>
                 </div>
                 <h5>-----------</h5>
-                <p>{element?.questionEasy?.text[language]}</p>
-                <p>{element?.questionEasy?.answer[language]}</p>
+                <p>{element?.questionEasy?.text[language]["text"]}</p>
+                <p>{element?.questionEasy?.answer[language]["text"]}</p>
                 <br/>
                 <h5>-----------</h5>
-                <p>{element?.questionHard?.text[language]}</p>
-                <p>{element?.questionHard?.answer[language]}</p>
+                <p>{element?.questionHard?.text[language]["text"]}</p>
+                <p>{element?.questionHard?.answer[language]["text"]}</p>
                 </div>
             </div>
             :null}

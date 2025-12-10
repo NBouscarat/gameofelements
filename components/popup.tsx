@@ -29,7 +29,8 @@ export default function PopUp({}: { }) {
       }
   const [tmpElement,setElement] = useState(InitPopUpElement());
   const [difficulty,setDifficulty]=useState("EASY");
-  const [language,setLanguage]=useState("en");
+  type Translation = "en" | "fr" | "de" | "lu";
+  const [language,setLanguage]=useState<Translation>("en");
 
 
 
@@ -60,17 +61,17 @@ export default function PopUp({}: { }) {
 
     const GetValueQuestion = () =>{
         if(difficulty==="EASY"){
-            return tmpElement.questionEasy? tmpElement.questionEasy.text[language.toLowerCase() as keyof typeof tmpElement.questionEasy.text] : "";
+            return tmpElement.questionEasy? tmpElement.questionEasy.text[language]["text"] : "";
         }else{
-            return tmpElement.questionHard? tmpElement.questionHard.text[language.toLowerCase() as keyof typeof tmpElement.questionHard.text] : "";
+            return tmpElement.questionHard? tmpElement.questionHard.text[language]["text"] : "";
         }
     }
 
     const GetValueAnswer = () =>{
         if(difficulty==="EASY"){
-            return tmpElement.questionEasy? tmpElement.questionEasy.answer[language.toLowerCase() as keyof typeof tmpElement.questionEasy.answer] : "";
+            return tmpElement.questionEasy? tmpElement.questionEasy.answer[language]["text"] : "";
         }else{
-            return tmpElement.questionHard? tmpElement.questionHard.answer[language.toLowerCase() as keyof typeof tmpElement.questionHard.answer] : "";
+            return tmpElement.questionHard? tmpElement.questionHard.answer[language]["text"] : "";
         }
     }
 
@@ -80,21 +81,25 @@ export default function PopUp({}: { }) {
             _element.questionEasy = _element.questionEasy? _element.questionEasy : {
                 id: 0,
                 element_id: _element.id,
-                text: { en: "", fr: "", de: "", lu: "" },
+                text: {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
                 difficulty: 'easy',
-                answer: { en: "", fr: "", de: "", lu: "" },
+                answer: {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
             };
-            _element.questionEasy.text[language.toLowerCase() as keyof typeof _element.questionEasy.text] = e;
+            if (_element.questionEasy && language.toLowerCase() in _element.questionEasy.text) {
+                _element.questionEasy.text[language]["text"] = e;
+            }
         }
         else{
             _element.questionHard = _element.questionHard? _element.questionHard : {
                 id: 0,
                 element_id: _element.id,
-                text: { en: "", fr: "", de: "", lu: "" },
+                text: {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
                 difficulty: 'hard',
-                answer: { en: "", fr: "", de: "", lu: "" },
+                answer: {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
             };
-            _element.questionHard.text[language.toLowerCase() as keyof typeof _element.questionHard.text] = e;
+            if (_element.questionHard && language.toLowerCase() in _element.questionHard.text) {
+                _element.questionHard.text[language]["text"] = e;
+            }
         }
         setElement(_element);
     }
@@ -105,21 +110,25 @@ export default function PopUp({}: { }) {
             _element.questionEasy = _element.questionEasy? _element.questionEasy : {
                 id: 0,
                 element_id: _element.id,
-                text: { en: "", fr: "", de: "", lu: "" },
+                text:  {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
                 difficulty: 'easy',
-                answer: { en: "", fr: "", de: "", lu: "" },
+                answer: {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
             };
-            _element.questionEasy.answer[language.toLowerCase() as keyof typeof _element.questionEasy.answer] = e;
+            if (_element.questionEasy && language.toLowerCase() in _element.questionEasy.answer) {
+                _element.questionEasy.answer[language.toLowerCase() as keyof typeof _element.questionEasy.answer]["text"] = e;
+            }
         }
         else{
             _element.questionHard = _element.questionHard? _element.questionHard : {
                 id: 0,
                 element_id: _element.id,
-                text: { en: "", fr: "", de: "", lu: "" },
+                text: {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
                 difficulty: 'hard',
-                answer: { en: "", fr: "", de: "", lu: "" },
+                answer: {"de":{text:"",id:0},"en":{text:"",id:0},"fr":{text:"",id:0},"lu":{text:"",id:0}},
             };
-            _element.questionHard.answer[language.toLowerCase() as keyof typeof _element.questionHard.answer] = e;
+            if (_element.questionHard && language.toLowerCase() in _element.questionHard.answer) {
+                _element.questionHard.answer[language.toLowerCase() as keyof typeof _element.questionHard.answer]["text"] = e;
+            }
         }
         setElement(_element);
     }
@@ -200,7 +209,7 @@ export default function PopUp({}: { }) {
                     <label>
                     Answer: 
                     </label>
-                    <textarea name="question" onChange={(e)=>HandleUpdateAnswer(e.target.value)} value={GetValueAnswer()} />
+                    <textarea name="answer" onChange={(e)=>HandleUpdateAnswer(e.target.value)} value={GetValueAnswer()} />
                 </div>
                 <div className={styles.formRow}>
                     <input type="checkbox" name="autoTranslate" />

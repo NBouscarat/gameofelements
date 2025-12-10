@@ -215,9 +215,10 @@ body{
   height: 100%;
   flex: 1;
   overflow: hidden;
+  z-index: 5;
 }
 .gridItem.expanded{
-  z-index: 40;
+  z-index: 19;
 }
 .card .atomicNumber{
   position: absolute;

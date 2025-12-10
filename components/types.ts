@@ -41,6 +41,31 @@ export interface element {
     expanded:boolean;
 };
 
+export interface dbElement {
+    id: number;
+    position:string;
+    name: string;
+    symbol: string;
+    atomicNumber: number;
+    color: string;
+    questions:dbQuestion[];
+}
+export interface dbQuestion {
+    id:number,
+    difficulty: 'easy' | 'hard';
+    element_id: number;
+    iam: string;
+    isDefault: boolean;
+    translations:dbTranslation[];
+}
+export interface dbTranslation {
+    answer: string;
+    question: string;
+    language: 'en' | 'fr' | 'de' | 'lu';
+    question_id: number;
+    id:number;
+}
+
 
 export interface question {
     id: number;
@@ -52,9 +77,9 @@ export interface question {
 
 
 export interface translation {
-    en: string;
-    fr: string;
-    de: string;
-    lu: string;
+    en: { text: string; id:number; };
+    fr: { text: string; id:number; };
+    de: { text: string; id:number; };
+    lu: { text: string; id:number; };
 };
 
