@@ -13,39 +13,16 @@ import EmptyCell from "@/components/emptyCell";
 import PopUp from "@/components/popup";
 
 export default function Home() {
-  const { appData,AddElementFromDBToAppData} = useGlobalState();
+  const { appData,GetUser, GetDataFromAPI, GetMockData} = useGlobalState();
   
-  const GetDataFromApi = ()=> {
-    const config = {
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      params:{
-      }
-  };
-
-  let payload = {
-      action: "GET",
-  };
-
-  axios.post("https://dev.script.lu/research-n-dev/goe/dbConnection.php?q=GET" ,payload,config).then((res)=>{
-      console.log("Data from API:", res.data);
-      // for each element in res.data, call AddElementFromDBToAppData
-      res.data.forEach((dbElement:any) => {
-        AddElementFromDBToAppData(dbElement);
-      });
-  }).catch((error)=>{
-      console.log("Error getting Photos");
-  });
-  };
-
  
-
   // INIT
   useEffect(()=>{
     const abortController = new AbortController();
-    GetDataFromApi();
-
+    if(appData.initialized) return;
+    GetUser();
+    GetDataFromAPI();
+    //GetMockData();
     
     return () => {
         abortController.abort();

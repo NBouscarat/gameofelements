@@ -1,21 +1,25 @@
 /**
  * Answer pannel to display if the answer is correct or not and additonnal informations
  */
+'use client';
 import styles from "@/app/page.module.css";
 import { useGlobalState } from "./appStateContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faPen, faTimes} from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
 import { translation, element } from "./types";
+import { useRouter } from 'next/navigation'
 
 export default function Card({ route,element,gridPosition}: { route?: string; element: element ; gridPosition?:string }) { 
-  const { appData, CardToggleExpand,OpenPopUp} = useGlobalState();
+  const { appData, CardToggleExpand,OpenPopUp, SelectElement} = useGlobalState();
   const [language, setLanguage] = useState<keyof translation>("fr");
+  const router = useRouter();
 
   const HandleClick = ()=>{
-      element.expanded?null:CardToggleExpand(element.id);
-  }
+      SelectElement(element.id);
+      router.push(`/elements`);
 
+  }
 
   return (
     <div key={element.id} onClick={()=>HandleClick()} className={`${styles.gridItem} ${element.expanded?styles.expanded:null}`} style={{"gridArea": element.expanded?"2/2/10/18"
@@ -47,12 +51,12 @@ export default function Card({ route,element,gridPosition}: { route?: string; el
                         <span className={language==="lu"? styles.tglActive:styles.tglInactive} onClick={()=>setLanguage("lu")}>LU</span>
                 </div>
                 <h5>-----------</h5>
-                <p>{element?.questionEasy?.text[language]["text"]}</p>
-                <p>{element?.questionEasy?.answer[language]["text"]}</p>
+                <p>{element?.questionEasy?.text[language]}</p>
+                <p>{element?.questionEasy?.answer[language]}</p>
                 <br/>
                 <h5>-----------</h5>
-                <p>{element?.questionHard?.text[language]["text"]}</p>
-                <p>{element?.questionHard?.answer[language]["text"]}</p>
+                <p>{element?.questionHard?.text[language]}</p>
+                <p>{element?.questionHard?.answer[language]}</p>
                 </div>
             </div>
             :null}

@@ -20,6 +20,7 @@ export default function EmptyCell({gridPosition,id}: { gridPosition:string ; id?
     questionEasy: null,
     questionHard: null,
     expanded:false,
+    experiment: null
   };
 
   const HandleClick = ()=>{

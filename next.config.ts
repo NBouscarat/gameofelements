@@ -3,7 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   output:"export",
-  basePath: '/research-n-dev/goe',
+  basePath: '/goe',
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://example.com/sp">
+    <SPSSODescriptor
+        protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        
+        <!-- Clé publique pour signer les requêtes -->
+        <KeyDescriptor use="signing">
+            <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <X509Data>
+                    <X509Certificate>MIIE7zCCA1egAwIBAgIUOIwIXS1ZOD90Wfnn717aB5xAJNAwDQYJKoZIhvcNAQELBQAwgYYxCzAJBgNVBAYTAkxVMQowCAYDVQQIDAEgMRQwEgYDVQQHDAtXYWxmZXJkYW5nZTE6MDgGA1UECgwxQ2VudHJlIGRlIGdlc3Rpb24gaW5mb3JtYXRpcXVlIGRlIGwnw4PCqWR1ZGNhdGlvbjEZMBcGA1UEAwwQaWFtLmVkdWNhdGlvbi5sdTAeFw0yNDAxMTYxMzMwMTJaFw0zNDAxMTUxMzMwMTJaMIGGMQswCQYDVQQGEwJMVTEKMAgGA1UECAwBIDEUMBIGA1UEBwwLV2FsZmVyZGFuZ2UxOjA4BgNVBAoMMUNlbnRyZSBkZSBnZXN0aW9uIGluZm9ybWF0aXF1ZSBkZSBsJ8ODwqlkdWRjYXRpb24xGTAXBgNVBAMMEGlhbS5lZHVjYXRpb24ubHUwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQCjmKnPb4OEDdqWjVpRt5Gfq7dOmS5jZ27HCkD8sVezu1BhuCHJEoIG2/zgGejIfy3Z/GFUEoovecRvOmQYf//mNqUOP2JjR+4OYWjrnezG5DTCYgg4+d0t42+qg7lWKVfUutGPnsa9DAXdOOcTTNCnIEqDBjdwvUdEFIRf3100ghplMMMDGj/OGS3M5VALkmQ9vNJ4Fjv8aThzGFyGfLZ2dYZLn5/PMOZwdJq0D+MUhDtLTWESRaa/OkZNvXCoWDCl/TI2+toIhifsXV7T0BcEM0zpG1ZQlI+w3L6lwYD7Dttw2Hq5TeHqqswtwhoqE3+nqUzXelvhoOIuVV1Cq+TQsxPVHP/p4l10l0i+8mOvTZ8H5AvsqkMJESnd7mXk/0lFg5yaLFjjHWtKfGmBvgCLUjdt4aTiuvW//pkWuSwtm/uxBFN3z8E+VaCq6ssc8eA37zezhmSxxZ04S6OHOvvu6HhOYpbbCEIdo0BrCFsZHU6JpKyP5lSLmETrKnDg2+0CAwEAAaNTMFEwHQYDVR0OBBYEFPu/FCn41Mb6dXydPVuplSvWbxg/MB8GA1UdIwQYMBaAFPu/FCn41Mb6dXydPVuplSvWbxg/MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggGBAA8aszOMYJudiAIYbsqIXe7qsErwY3yvYqT2Hg1Er2PJD6/zl92QMhQKpwjvkWpYkcSwf9TtBnp25+R5+l30BRPQFWmGQ4QwJTzzdpUbbHSCm/l3VivyIYF/SN3H2tt9tWVgzPumrPVsz28eSiv/8VCR7iqGyJ3U0xOk+hoH2QaU8uYLYLSlYTXJGDGDiu1XcHKJy7/b4/ZlJm6LJ2XA3mM5EhCS0Qi3Lmv6bO0JJeQY3STjK+x4zr1Cwj7AFC6KW6NNb1ZhqEMedLrR7/1BZYZBVldo/RmbSVt/HTvMa0N9e13eQiyS2KO4tBk8+ilBqEJQOPyqHbjAh2Q1ZVCcfov9bivqhdyRXqUwE0KV6sFLsVSp/eN+SZ/u05YMl8qPaDiKbaAZMJgUuLJoO7Fc+s8hYDpHfBFBtP1MfOa0Uu1pZk7rbBZew2u1cK1VzYYtPG6HMMPg+9c6xZhcMuR50S4cjCTKMIBtq/ft9zYOSIIo5tjwDNpvdlLkeHd64c/HwA==
+                    </X509Certificate>
+                </X509Data>
+            </KeyInfo>
+        </KeyDescriptor>
+
+        <!-- Clé publique pour chiffrer les assertions -->
+        <KeyDescriptor use="encryption">
+            <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <X509Data>
+                    <X509Certificate>MIIE7zCCA1egAwIBAgIUOIwIXS1ZOD90Wfnn717aB5xAJNAwDQYJKoZIhvcNAQELBQAwgYYxCzAJBgNVBAYTAkxVMQowCAYDVQQIDAEgMRQwEgYDVQQHDAtXYWxmZXJkYW5nZTE6MDgGA1UECgwxQ2VudHJlIGRlIGdlc3Rpb24gaW5mb3JtYXRpcXVlIGRlIGwnw4PCqWR1ZGNhdGlvbjEZMBcGA1UEAwwQaWFtLmVkdWNhdGlvbi5sdTAeFw0yNDAxMTYxMzMwMTJaFw0zNDAxMTUxMzMwMTJaMIGGMQswCQYDVQQGEwJMVTEKMAgGA1UECAwBIDEUMBIGA1UEBwwLV2FsZmVyZGFuZ2UxOjA4BgNVBAoMMUNlbnRyZSBkZSBnZXN0aW9uIGluZm9ybWF0aXF1ZSBkZSBsJ8ODwqlkdWRjYXRpb24xGTAXBgNVBAMMEGlhbS5lZHVjYXRpb24ubHUwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQCjmKnPb4OEDdqWjVpRt5Gfq7dOmS5jZ27HCkD8sVezu1BhuCHJEoIG2/zgGejIfy3Z/GFUEoovecRvOmQYf//mNqUOP2JjR+4OYWjrnezG5DTCYgg4+d0t42+qg7lWKVfUutGPnsa9DAXdOOcTTNCnIEqDBjdwvUdEFIRf3100ghplMMMDGj/OGS3M5VALkmQ9vNJ4Fjv8aThzGFyGfLZ2dYZLn5/PMOZwdJq0D+MUhDtLTWESRaa/OkZNvXCoWDCl/TI2+toIhifsXV7T0BcEM0zpG1ZQlI+w3L6lwYD7Dttw2Hq5TeHqqswtwhoqE3+nqUzXelvhoOIuVV1Cq+TQsxPVHP/p4l10l0i+8mOvTZ8H5AvsqkMJESnd7mXk/0lFg5yaLFjjHWtKfGmBvgCLUjdt4aTiuvW//pkWuSwtm/uxBFN3z8E+VaCq6ssc8eA37zezhmSxxZ04S6OHOvvu6HhOYpbbCEIdo0BrCFsZHU6JpKyP5lSLmETrKnDg2+0CAwEAAaNTMFEwHQYDVR0OBBYEFPu/FCn41Mb6dXydPVuplSvWbxg/MB8GA1UdIwQYMBaAFPu/FCn41Mb6dXydPVuplSvWbxg/MA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggGBAA8aszOMYJudiAIYbsqIXe7qsErwY3yvYqT2Hg1Er2PJD6/zl92QMhQKpwjvkWpYkcSwf9TtBnp25+R5+l30BRPQFWmGQ4QwJTzzdpUbbHSCm/l3VivyIYF/SN3H2tt9tWVgzPumrPVsz28eSiv/8VCR7iqGyJ3U0xOk+hoH2QaU8uYLYLSlYTXJGDGDiu1XcHKJy7/b4/ZlJm6LJ2XA3mM5EhCS0Qi3Lmv6bO0JJeQY3STjK+x4zr1Cwj7AFC6KW6NNb1ZhqEMedLrR7/1BZYZBVldo/RmbSVt/HTvMa0N9e13eQiyS2KO4tBk8+ilBqEJQOPyqHbjAh2Q1ZVCcfov9bivqhdyRXqUwE0KV6sFLsVSp/eN+SZ/u05YMl8qPaDiKbaAZMJgUuLJoO7Fc+s8hYDpHfBFBtP1MfOa0Uu1pZk7rbBZew2u1cK1VzYYtPG6HMMPg+9c6xZhcMuR50S4cjCTKMIBtq/ft9zYOSIIo5tjwDNpvdlLkeHd64c/HwA==
+                    </X509Certificate>
+                </X509Data>
+            </KeyInfo>
+        </KeyDescriptor>
+
+
+        <!-- URL pour le Single Logout -->
+        <md:SingleLogoutService 
+            Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" 
+            Location="https://auth.education.lu/module.php/saml/idp/singleLogout"/>
+        
+    </SPSSODescriptor>
+</EntityDescriptor>

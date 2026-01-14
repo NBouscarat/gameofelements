@@ -103,6 +103,8 @@ body{
   padding: 20px;
   border-radius: 10px;
   width: 600px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   z-index: 21;
   color: var(--textColor);
 }
@@ -127,7 +129,7 @@ body{
 .popUp form .formRow{
   position: relative;
   justify-content: space-between;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: row;
   justify-content: start;
@@ -140,7 +142,7 @@ body{
   font-size: 0.7rem;
   position: absolute;
   display: block;
-  top: -10px;
+  top: -20px;
   left: 10px;
   padding: 0 10px;
   background: #fff;
