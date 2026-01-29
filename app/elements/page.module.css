@@ -16,7 +16,7 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    background: #f6f1dd;
+    background: url(/goe/background.png) repeat;
     color: var(--textColor);
 }
 .header{
@@ -33,14 +33,11 @@
     display: flex;
     flex:1;
     justify-content: center;
-}
-.footer{
-    display: flex;
-    flex-direction: row;
-    padding: 40px;
-    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
     gap: 20px;
 }
+
 .homeButton{
   cursor: pointer;
 }
@@ -56,16 +53,20 @@
   cursor: pointer;
   font-size: 1rem;
 }
-.menuButton.disabled{
+.menuButtonDisabled{
   pointer-events: none;
-  cursor: default;
-  opacity: 0.8;
+  cursor: not-allowed;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 30px;
+  gap: 10px;
   background: var(--background-disabled);
+  border-radius: var(--roundBorder);
+  box-shadow: var(--boxShadow);
+  font-size: 1rem;
 }
-.footer>img{
-  cursor: pointer;
 
-}
 
 .content{
   display: flex;
@@ -74,7 +75,7 @@
   justify-content: center;
   flex: 1;
   background: var(--background);
-  max-width: 60vw;
+  width: 70vw;
   box-shadow: var(--boxShadow);
   border-radius: var(--roundBorder);
   padding: 0;
@@ -163,4 +164,60 @@
 }
 .content a{
   color: var(--colorOrange);
+}
+
+.footer{
+  display: flex;
+  flex-direction: row;
+  padding: 40px;
+  justify-content: flex-start;
+  gap: 20px;
+}
+.footer>img{
+  cursor: pointer;
+}
+
+/*****************************************************
+  COLORS 
+******************************************************/
+
+.color1{
+  background: #97ae5b;
+  color:#fff;
+}
+.color2{
+  background: #ee6949;
+  color:#fff;
+}
+.color3{
+  background: #e03c6b;
+  color:#fff;
+}
+.color4{
+  background: #ffed6a;
+  color:#000;
+}
+.color5{
+  background: #8a89c1;
+  color:#fff;
+}
+.color6{
+  background: rgb(255, 234, 219);
+  color:#fff;
+}
+.color7{
+  background: rgb(233, 233, 236);
+  color:#fff;
+}
+.color8{
+  background: rgb(220, 250, 235);
+  color:#fff;
+}
+.color9{
+  background: rgb(254, 249, 230);
+  color:#fff;
+}
+.color10{
+  background: rgb(255, 235, 238);
+  color:#fff;
 }

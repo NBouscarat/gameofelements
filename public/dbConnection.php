@@ -85,14 +85,65 @@ if($data["action"] === "INSERT_ELEMENT"){
     } catch (\Throwable $th) {
         echo $th;
     }
-   
-    // GET USER ID BY IAM or INSERT NEW USER IF NOT EXISTS
-    
-
-    
-
 
 }
+if($data["action"] === "INSERT_QUESTION"){
+    // INSERT QUESTION FOR SPECIFIC ELEMENT
+    $stmt = $conn->prepare("INSERT INTO goe_questions (`id`,`isDefault`,`difficulty`,`text_fr`,`text_de`,`text_en`,`answer_fr`,`answer_de`,`answer_en`,`element_id`,`user_id`,`moreInfo_fr`,`moreInfo_en`,`moreInfo_de`)
+    VALUES (0,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $stmt->bind_param("isssssssiisss",
+        $data["question"]["isDefault"],
+        $data["question"]["difficulty"],
+        $data["question"]["text"]["fr"],
+        $data["question"]["text"]["de"],
+        $data["question"]["text"]["en"],
+        $data["question"]["answer"]["fr"],
+        $data["question"]["answer"]["de"],
+        $data["question"]["answer"]["en"],
+        $data["question"]["element_id"],
+        $data["user_id"],
+        $data["question"]["moreInfo"]["fr"],
+        $data["question"]["moreInfo"]["en"],
+        $data["question"]["moreInfo"]["de"],
+    );
+    try {
+        $stmt->execute();
+        $questionId = $stmt->insert_id;
+        echo json_encode(array("question_id"=>$questionId));
+    } catch (\Throwable $th) {
+        echo $th;
+    }
+}
+
+if($data["action"] === "INSERT_EXPERIMENT"){
+    // INSERT EXPERIMENT FOR SPECIFIC ELEMENT
+    $stmt = $conn->prepare("INSERT INTO goe_experiments (`id`,`element_id`,`question_fr`,`question_de`,`question_en`,`answer_fr`,`answer_de`,`answer_en`,`moreInfo_fr`,`moreInfo_de`,`moreInfo_en`)
+    VALUES (0,?,?,?,?,?,?,?,?,?,?)");
+    $stmt->bind_param("isssssssss",
+        $data["experiment"]["element_id"],
+        $data["experiment"]["question"]["fr"],
+        $data["experiment"]["question"]["de"],
+        $data["experiment"]["question"]["en"],
+        $data["experiment"]["answer"]["fr"],
+        $data["experiment"]["answer"]["de"],
+        $data["experiment"]["answer"]["en"],
+        $data["experiment"]["moreInfo"]["fr"],
+        $data["experiment"]["moreInfo"]["de"],
+        $data["experiment"]["moreInfo"]["en"]
+    );
+    try {
+        $stmt->execute();
+        $experimentId = $stmt->insert_id;
+        echo json_encode(array("experiment_id"=>$experimentId));
+    } catch (\Throwable $th) {
+        echo $th;
+    }
+   
+}
+/* 
+INSERT INTO `goe_elements` (`id`, `position`, `name`, `symbol`, `atomicNumber`, `color`) VALUES (NULL, '50-0', 'Caesium', 'Cs', '55', 'color1');
+INSERT INTO `goe_questions` (`id`, `isDefault`, `difficulty`, `text_fr`, `text_de`, `text_en`, `text_lu`, `answer_fr`, `answer_de`, `answer_en`, `answer_lu`, `element_id`, `user_id`, `moreInfo_fr`, `moreInfo_en`, `moreInfo_de`, `moreInfo_lu`) VALUES (NULL, '1', 'easy', '', '', '', '', '', '', '', '', '55', NULL, '', '', '', '');
+*/
 
 // READ
 if($data["action"] === "GET"){
@@ -108,27 +159,25 @@ if($data["action"] === "GET"){
      q.isDefault as isDefault,
      q.difficulty as difficulty,
      q.id as question_id,
-     q.text_fr as text_fr,
-     q.text_en as text_en,
-     q.text_de as text_de,
-     q.text_lu as text_lu,
-     q.answer_fr as answer_fr,
-     q.answer_en as answer_en,
-     q.answer_de as answer_de,
-     q.answer_lu as answer_lu,
-     q.moreInfo_fr as moreinfo_fr,
-     q.moreInfo_en as moreinfo_en,
-     q.moreInfo_de as moreinfo_de,
-     q.moreInfo_lu as moreinfo_lu,
+     q.text_fr as q_text_fr,
+     q.text_en as q_text_en,
+     q.text_de as q_text_de,
+     q.answer_fr as q_answer_fr,
+     q.answer_en as q_answer_en,
+     q.answer_de as q_answer_de,
+     q.moreInfo_fr as q_moreInfo_fr,
+     q.moreInfo_en as q_moreInfo_en,
+     q.moreInfo_de as q_moreInfo_de,
      ex.id as experiment_id,
-     ex.setup_fr as setup_fr,
-     ex.setup_en as setup_en,
-     ex.setup_de as setup_de,
-     ex.setup_lu as setup_lu,
-     ex.explanation_fr as explanation_fr,
-     ex.explanation_en as explanation_en,
-     ex.explanation_de as explanation_de,
-     ex.explanation_lu as explanation_lu
+     ex.question_fr as ex_question_fr,
+     ex.question_en as ex_question_en,
+     ex.question_de as ex_question_de,
+     ex.answer_fr as ex_answer_fr,
+     ex.answer_en as ex_answer_en,
+     ex.answer_de as ex_answer_de,
+     ex.moreInfo_fr as ex_moreInfo_fr,
+     ex.moreInfo_en as ex_moreInfo_en,
+     ex.moreInfo_de as ex_moreInfo_de
      FROM `goe_questions` as q 
      LEFT JOIN goe_elements as e ON q.element_id = e.id
      LEFT JOIN goe_experiments as ex on ex.element_id = e.id
@@ -141,38 +190,38 @@ if($data["action"] === "GET"){
              $experiments = [];
              while($row = $result->fetch_assoc()) {
                  // filter only elements data 
-                 $tmpRow = array("element_id"=>$row["element_id"],
-                                 "experiment_id"=>$row["experiment_id"],
-                                 "question_id"=>$row["question_id"],
-                                 "position"=>$row["position"],
-                                 "name"=>$row["name"],
-                                 "symbol"=>$row["symbol"],
-                                 "atomicNumber"=>$row["atomicNumber"],
-                                 "color"=>$row["color"],
-                                 "iam"=>$row["iam"],
-                                 "isAdmin"=>$row["isAdmin"],
-                                 "isDefault"=>$row["isDefault"],
-                                 "difficulty"=>$row["difficulty"],
-                                 "text_fr"=>$row["text_fr"],
-                                 "text_en"=>$row["text_en"],
-                                 "text_de"=>$row["text_de"],
-                                 "text_lu"=>$row["text_lu"],
-                                 "answer_fr"=>$row["answer_fr"],
-                                 "answer_en"=>$row["answer_en"],
-                                 "answer_de"=>$row["answer_de"],
-                                 "answer_lu"=>$row["answer_lu"],
-                                 "moreInfo_fr"=>$row["moreInfo_fr"],
-                                 "moreInfo_en"=>$row["moreInfo_en"],
-                                 "moreInfo_de"=>$row["moreInfo_de"],
-                                 "moreInfo_lu"=>$row["moreInfo_lu"],
-                                 "setup_fr"=>$row["setup_fr"],
-                                 "setup_en"=>$row["setup_en"],
-                                 "setup_de"=>$row["setup_de"],
-                                 "setup_lu"=>$row["setup_lu"],
-                                 "explanation_fr"=>$row["explanation_fr"],
-                                 "explanation_en"=>$row["explanation_en"],
-                                 "explanation_de"=>$row["explanation_de"],
-                                 "explanation_lu"=>$row["explanation_lu"],);
+                 $tmpRow = array(
+                                "element_id"=>$row["element_id"],
+                                "experiment_id"=>$row["experiment_id"],
+                                "question_id"=>$row["question_id"],
+                                "position"=>$row["position"],
+                                "name"=>$row["name"],
+                                "symbol"=>$row["symbol"],
+                                "atomicNumber"=>$row["atomicNumber"],
+                                "color"=>$row["color"],
+                                "iam"=>$row["iam"],
+                                "isAdmin"=>$row["isAdmin"],
+                                "isDefault"=>$row["isDefault"],
+                                "difficulty"=>$row["difficulty"],
+                                "q_text_fr"=>$row["q_text_fr"],
+                                "q_text_en"=>$row["q_text_en"],
+                                "q_text_de"=>$row["q_text_de"],
+                                "q_answer_fr"=>$row["q_answer_fr"],
+                                "q_answer_en"=>$row["q_answer_en"],
+                                "q_answer_de"=>$row["q_answer_de"],
+                                "q_moreInfo_fr"=>$row["q_moreInfo_fr"],
+                                "q_moreInfo_en"=>$row["q_moreInfo_en"],
+                                "q_moreInfo_de"=>$row["q_moreInfo_de"],
+                                "ex_question_fr"=>$row["ex_question_fr"],
+                                "ex_question_en"=>$row["ex_question_en"],
+                                "ex_question_de"=>$row["ex_question_de"],
+                                "ex_answer_fr"=>$row["ex_answer_fr"],
+                                "ex_answer_en"=>$row["ex_answer_en"],
+                                "ex_answer_de"=>$row["ex_answer_de"],
+                                "ex_moreInfo_fr"=>$row["ex_moreInfo_fr"],
+                                "ex_moreInfo_en"=>$row["ex_moreInfo_en"],
+                                "ex_moreInfo_de"=>$row["ex_moreInfo_de"],
+                                );
                  //if element_id not already in elements array, add it
                  $found = false;
                  foreach($elements as $element){
@@ -189,21 +238,29 @@ if($data["action"] === "GET"){
                                          "atomicNumber"=>$tmpRow["atomicNumber"],
                                          "color"=>$tmpRow["color"],
                                          "questions"=>[],
-                                         "experiment"=> array(  "id"=>$tmpRow["experiment_id"],
-                                             "setup"=>[
-                                                 "fr"=>$tmpRow["setup_fr"],
-                                                 "en"=>$tmpRow["setup_en"],
-                                                 "de"=>$tmpRow["setup_de"],
-                                                 "lu"=>$tmpRow["setup_lu"],
-                                             ],
-                                             "explanation"=>[
-                                                 "fr"=>$tmpRow["explanation_fr"],
-                                                 "en"=>$tmpRow["explanation_en"],
-                                                 "de"=>$tmpRow["explanation_de"],
-                                                 "lu"=>$tmpRow["explanation_lu"],
-                                             ],
-                                             ),
+                                         "experiment"=> null,
                                          );
+                        // add experiment if any
+                        if($tmpRow["experiment_id"] != null){
+                            $tmp_element["experiment"] = array(
+                                "id"=>$tmpRow["experiment_id"],
+                                "question"=>[
+                                    "fr"=>$tmpRow["ex_question_fr"],
+                                    "en"=>$tmpRow["ex_question_en"],
+                                    "de"=>$tmpRow["ex_question_de"],
+                                ],
+                                "answer"=>[
+                                    "fr"=>$tmpRow["ex_answer_fr"],
+                                    "en"=>$tmpRow["ex_answer_en"],
+                                    "de"=>$tmpRow["ex_answer_de"],
+                                ],
+                                "moreInfo"=>[
+                                    "fr"=>$tmpRow["ex_moreInfo_fr"],
+                                    "en"=>$tmpRow["ex_moreInfo_en"],
+                                    "de"=>$tmpRow["ex_moreInfo_de"],
+                                ],
+                            );
+                        }
                      array_push($elements,$tmp_element);
                  }
                  
@@ -211,22 +268,19 @@ if($data["action"] === "GET"){
                                          "isDefault"=>$tmpRow["isDefault"],
                                          "difficulty"=>$tmpRow["difficulty"],
                                          "text"=>[
-                                             "fr"=>$tmpRow["text_fr"],
-                                             "en"=>$tmpRow["text_en"],
-                                             "de"=>$tmpRow["text_de"],
-                                             "lu"=>$tmpRow["text_lu"],
+                                             "fr"=>$tmpRow["q_text_fr"],
+                                             "en"=>$tmpRow["q_text_en"],
+                                             "de"=>$tmpRow["q_text_de"],
                                          ],
                                          "answer"=>[
-                                             "fr"=>$tmpRow["answer_fr"],
-                                             "en"=>$tmpRow["answer_en"],
-                                             "de"=>$tmpRow["answer_de"],
-                                             "lu"=>$tmpRow["answer_lu"],
+                                             "fr"=>$tmpRow["q_answer_fr"],
+                                             "en"=>$tmpRow["q_answer_en"],
+                                             "de"=>$tmpRow["q_answer_de"],
                                          ],
                                          "moreInfo"=>[
-                                             "fr"=>$tmpRow["answer_fr"],
-                                             "en"=>$tmpRow["answer_en"],
-                                             "de"=>$tmpRow["answer_de"],
-                                             "lu"=>$tmpRow["answer_lu"],
+                                             "fr"=>$tmpRow["q_moreInfo_fr"],
+                                             "en"=>$tmpRow["q_moreInfo_en"],
+                                             "de"=>$tmpRow["q_moreInfo_de"],
                                          ],
                                          "element_id"=>$tmpRow["element_id"],
                                          "iam"=>$tmpRow["iam"],
@@ -280,52 +334,58 @@ if($data["action"] === "UPDATE_ELEMENT"){
     $questions = [];
     array_push($questions,$data["element"]["questionEasy"]);
     array_push($questions,$data["element"]["questionHard"]);
-
-    foreach($questions as $question){
-        // UPDATE each question
-        $stmt = $conn->prepare("UPDATE goe_questions SET text_fr=?,text_de=?,text_en=?,text_lu=?, answer_fr=?, answer_de=?, answer_en=?, answer_lu=?,moreInfo_fr=?, moreInfo_de=?, moreInfo_en=?, moreInfo_lu=? WHERE id=?");
-            $stmt->bind_param("ssssssssssssi",$question["text"]["fr"],
-            $question["text"]["de"],
-            $question["text"]["en"],
-            $question["text"]["lu"],
-            $question["answer"]["fr"],
-            $question["answer"]["de"],
-            $question["answer"]["en"],
-            $question["answer"]["lu"],
-            $question["moreInfo"]["fr"],
-            $question["moreInfo"]["de"],
-            $question["moreInfo"]["en"],
-            $question["moreInfo"]["lu"],
-            $question["id"]
-        );
+    try{
+        foreach($questions as $question){
+            // UPDATE each question
+            $stmt = $conn->prepare("UPDATE goe_questions SET text_fr=?,text_de=?,text_en=?, answer_fr=?, answer_de=?, answer_en=?,moreInfo_fr=?, moreInfo_de=?, moreInfo_en=? WHERE id=?");
+                $stmt->bind_param("sssssssssi",
+                $question["text"]["fr"],
+                $question["text"]["de"],
+                $question["text"]["en"],
+                $question["answer"]["fr"],
+                $question["answer"]["de"],
+                $question["answer"]["en"],
+                $question["moreInfo"]["fr"],
+                $question["moreInfo"]["de"],
+                $question["moreInfo"]["en"],
+                $question["id"]
+            );
+            $stmt->execute();
+                
+        } 
+    
+        
+        // UPDATE EXPERIMENT IF ANY
+        if(isset($data["element"]["experiment"])){
+            $experiment = $data["element"]["experiment"];
+            $stmt = $conn->prepare("UPDATE goe_experiments SET question_fr=?,question_de=?,question_en=?, answer_fr=?, answer_de=?, answer_en=?, moreInfo_fr=?, moreInfo_de=?, moreInfo_en=? WHERE id=?");
+            $stmt->bind_param(
+                "sssssssssi",
+                $experiment["question"]["fr"],
+                $experiment["question"]["de"],
+                $experiment["question"]["en"],
+                $experiment["answer"]["fr"],
+                $experiment["answer"]["de"],
+                $experiment["answer"]["en"],
+                $experiment["moreInfo"]["fr"],
+                $experiment["moreInfo"]["de"],
+                $experiment["moreInfo"]["en"],
+                $experiment["id"]
+            );
+            $stmt->execute();
+        };
+    
+        // Extract element data
+        $element = $data["element"];
+        // UPDATE element
+        $stmt = $conn->prepare("UPDATE goe_elements SET position=?, name=?, symbol=?, atomicNumber=?, color=? WHERE id=?");
+        $stmt->bind_param("sssisi",$element["position"],$element["name"],$element["symbol"],$element["atomicNumber"],$element["color"],$element["id"]);
         $stmt->execute();
-            
-    } 
-    // UPDATE EXPERIMENT IF ANY
-    if(isset($data["element"]["experiment"])){
-        $experiment = $data["element"]["experiment"];
-        $stmt = $conn->prepare("UPDATE goe_experiments SET setup_fr=?,setup_de=?,setup_en=?,setup_lu=?, explanation_fr=?, explanation_de=?, explanation_en=?, explanation_lu=? WHERE id=?");
-        $stmt->bind_param(
-            "ssssssssi",
-            $experiment["setup"]["fr"],
-            $experiment["setup"]["de"],
-            $experiment["setup"]["en"],
-            $experiment["setup"]["lu"],
-            $experiment["explanation"]["fr"],
-            $experiment["explanation"]["de"],
-            $experiment["explanation"]["en"],
-            $experiment["explanation"]["lu"],
-            $experiment["id"]
-        );
-        $stmt->execute();
-    };
-
-    // Extract element data
-    $element = $data["element"];
-    // UPDATE element
-    $stmt = $conn->prepare("UPDATE goe_elements SET position=?, name=?, symbol=?, atomicNumber=?, color=? WHERE id=?");
-    $stmt->bind_param("sssisi",$element["position"],$element["name"],$element["symbol"],$element["atomicNumber"],$element["color"],$element["id"]);
-    $stmt->execute();
+    } catch (\Throwable $th) {
+        echo $th;
+    }
+    
+    
 }
 
 // DELETE

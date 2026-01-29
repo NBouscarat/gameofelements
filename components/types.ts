@@ -15,7 +15,7 @@ export interface AppData {
     error: string | null;
     start: boolean;
     elements:element[];
-    language: 'en' | 'fr' | 'de' | 'lu';
+    language: 'en' | 'fr' | 'de' ;
     user: user | null;
     popUpOpen: boolean;
     popUpType: popUpTypes|null;
@@ -86,57 +86,62 @@ export interface translation {
     en: string;
     fr: string;
     de: string;
-    lu: string;
 };
 
 export interface experiment{
     id:number;
-    explanation: translation;
-    setup: translation;
+    question: translation;
+    answer: translation;
+    moreInfo:translation|null;
+    element_id:number;
 }
 
 
-export const h2Translation = {
+export const textTranslation = {
     experimentSetup:{
         en: "Setup",
         fr: "Installation",
-        de: "Aufbau",
-        lu: "Installatioun"
+        de: "Aufbau"
     },
     experimentExplanation:{
         en: "Explanation",
         fr: "Explication",
-        de: "Erklärung",
-        lu: "Erklärung"
+        de: "Erklärung"
     },
     moreInformation:{
         en: "More Information",
         fr: "Informations supplémentaires",
-        de: "Zusätzliche Informationen",
-        lu: "Zousätzlech Informatiounen"
+        de: "Zusätzliche Informationen"
     },
     question:{
         en: "Question",
         fr: "Question",
-        de: "Frage",
-        lu: "Fro"
+        de: "Frage"
     },
     answer:{
         en: "Answer",
         fr: "Réponse",
-        de: "Antwort",
-        lu: "Äntwert"
+        de: "Antwort"
     },
     experiment:{
         en: "Experiment",
         fr: "Expérience",
-        de: "Experiment",
-        lu: "Experiment"
+        de: "Experiment"
     },
     ownQuestion:{
         en: "Add own question",
         fr: "Ajouter une question personnelle",
-        de: "eigene Frage hinzufügen",
-        lu: "eegen Fro derbäisetzen"
+        de: "eigene Frage hinzufügen"
+    }
+    ,
+    difficultyEasy:{
+        de: "Leicht",
+        en: "Easy",
+        fr: "Facile"
+    },
+    difficultyHard:{
+        de: "Schwer",
+        en: "Hard",
+        fr: "Difficile"
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://example.com/sp">
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://app.script.lu/goe/">
     <SPSSODescriptor
         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
         
@@ -25,9 +25,13 @@
 
 
         <!-- URL pour le Single Logout -->
-        <md:SingleLogoutService 
-            Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" 
-            Location="https://auth.education.lu/module.php/saml/idp/singleLogout"/>
+        <AssertionConsumerService
+            Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            Location="https://app.script.lu/goe/saml/acs"
+            index="0" />
+        <SingleLogoutService
+            Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            Location="https://app.script.lu/goe/saml/logout" />
         
     </SPSSODescriptor>
 </EntityDescriptor>

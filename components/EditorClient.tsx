@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 import { useRef, forwardRef,useImperativeHandle } from 'react';
 import type { Editor as TinyMCEEditor } from '@tinymce/tinymce-react';
 import { Editor } from "@tinymce/tinymce-react";
@@ -39,3 +39,4 @@ const EditorClient = forwardRef(({ value }: EditorClientProps, ref) => {
   );
 });
 export default EditorClient;
+ */

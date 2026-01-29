@@ -3,14 +3,15 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { AppData, element, popUpTypes, dbElement,dbQuestion, translation,question, user } from '@/components/types';
 import { } from './engine';
 import axios from 'axios';
+import crypto from 'crypto';
 
 
 interface AppState {
     appData: AppData;
-    GetUser: ()=>void;
+    GetUser: (IAMHashed:string)=>void;
     OpenPopUp: (element:element, popUpType:popUpTypes)=>void;
     ClosePopUp: ()=>void;
-    SwitchLanguage: (ln:'en' | 'fr' | 'de' | 'lu')=>void;
+    SwitchLanguage: (ln:'en' | 'fr' | 'de')=>void;
     SaveElement: (element:element)=>void;
     CardToggleExpand: (id:number)=>void;
     ReduceExpandedCards: ()=>void;
@@ -44,15 +45,30 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
     
     //const GA4 = ReactGA4.initialize("G-KZ2ENR9329");
 
-    const GetUser = ()=>{
-        //read IAM from localStorage
-        let iam = localStorage.getItem('iam');
+    const GetUser = (IAMHashed : string)=>{
+        //decrypt IAM
+        let iam = ""; // For testing purposes only
+        try {
+            // Clé secrète utilisée pour le chiffrement (doit être identique à celle utilisée dans PHP)
+            const secretKey = 'GameOfElements'; // Remplacez par votre clé secrète forte
+            const iv = crypto.createHash('sha256').update(secretKey).digest('hex').substr(0, 16); // IV dérivé de la clé
+      
+            // Déchiffrer le nameId
+            const decipher = crypto.createDecipheriv('aes-256-cbc', crypto.createHash('sha256').update(secretKey).digest(), iv);
+            let decryptedNameId = decipher.update(decodeURIComponent(IAMHashed), 'base64', 'utf8');
+            decryptedNameId += decipher.final('utf8');
+      
+            // Retourner le nameId déchiffré
+            iam = decryptedNameId;
+          } catch (error) {
+            console.error('Error decrypting IAM:', error);
+          }
         
         // IF IAM is Empty redirect to login page
         if(!iam){
             console.log("No IAM found, redirect to login page");
             iam = "bouni204"; // For testing purposes only
-            return;
+            //return;
         }
         
         const config = {
@@ -60,29 +76,39 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
                 'Content-Type': 'application/json',
             },
             params:{
+               
             }
         };
       
         let payload = {
             action: "GET_USER_BY_IAM",
+            iam: iam,
         };
         axios.post("https://app.script.lu/goe/dbConnection.php" ,payload,config).then((res)=>{
             console.log("User Data from API:", res.data);
-            // for each element in res.data, call AddElementFromDBToAppData
-            res.data.forEach((user:user) => {
-                // SECURITY CHECK against forgery
-                if(user.iam === iam){
-                    setAppData((prevData) => ({
-                        ...prevData,
-                        user: user,
-                    }));
-                }
-            });
+            
+            // SECURITY CHECK against forgery
+            if(res.data.iam === iam){
+                setAppData((prevData) => ({
+                    ...prevData,
+                    user: res.data,
+                }));
+            };
         }).catch((error)=>{
-            console.log("Error getting Photos");
+            console.log("Error getting User - DEV MOD mock admin ",error);
+            setAppData((prevData) => ({
+                ...prevData,
+                user: {
+                    id: 1,
+                    iam: "bouni204",
+                    isAdmin: true,
+                    questions: [],
+                },
+            }));
         });
       
     };
+
     const GetDataFromAPI = ()=> {
         const config = {
           headers: {
@@ -114,7 +140,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
             }
           });
       }).catch((error)=>{
-          console.log("Error getting Photos");
+          console.log("Error getting Elements",error);
       });
     };
 
@@ -129,7 +155,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
             questionEasy: null,
             questionHard: null,
             expanded: false,
-            experiment:null,
+            experiment: dbElement.experiment,
         };
 
         try{
@@ -145,7 +171,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
                         difficulty: dbQ.difficulty,
                         answer: dbQ.answer,
                         isDefault: dbQ.isDefault,
-                        moreInfo: null,
+                        moreInfo: dbQ.moreInfo ?? null,
                     };
                 }
 
@@ -158,7 +184,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
                         difficulty: dbQ.difficulty,
                         answer: dbQ.answer,
                         isDefault: dbQ.isDefault,
-                        moreInfo: null,
+                        moreInfo: dbQ.moreInfo ?? null,
                     };
                 }
 
@@ -177,7 +203,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
     const GetMockData = ()=>{
         const newElement:element = {
             id: 1,
-            position: "1/1/2/2",
+            position: "5-5",
             name: "Hydrogen",
             symbol: "H",
             atomicNumber: 1,
@@ -187,7 +213,6 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
                     de:"Was ist das Symbol für Wasserstoff?",
                     en:"What is the symbol for Hydrogen?",
                     fr:"Quel est le symbole de l'hydrogène?",
-                    lu:"Was ist das Symbol für Wasserstoff?",
                 },
                 id: 1,
                 element_id: 1,
@@ -196,55 +221,34 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
                     de:"H",
                     en:"H",
                     fr:"H",
-                    lu:"H",
                 },
                 isDefault: true,
                 moreInfo:{
                     de:"Mehr Informationen auf Deutsch",
                     en:"More information in English",
                     fr:"Plus d'informations en français",
-                    lu:"Mehr Informationen auf Deutsch",
                 }
             },
-            questionHard: {
-                text: {
-                    de:"Was ist das Symbol für Wasserstoff?",
-                    en:"What is the symbol for Hydrogen?",
-                    fr:"Quel est le symbole de l'hydrogène?",
-                    lu:"Was ist das Symbol für Wasserstoff?",
-                },
-                id: 1,
-                element_id: 1,
-                difficulty: 'hard',
-                answer: {
-                    de:"H",
-                    en:"H",
-                    fr:"H",
-                    lu:"H",
-                },
-                isDefault: true,
-                moreInfo:{
-                    de:"Mehr Informationen auf Deutsch",
-                    en:"More information in English",
-                    fr:"Plus d'informations en français",
-                    lu:"Mehr Informationen auf Deutsch",
-                }
-            },
+            questionHard: null,
             expanded: false,
             experiment:{
                 id:1,
-                explanation:{
+                question:{
                     de:"Experiment Erklärung auf Deutsch",
                     en:"Experiment explanation in English",
                     fr:"Explication de l'expérience en français",
-                    lu:"Experiment Erklärung auf Deutsch",
                 },
-                setup:{
+                answer:{
                     de:"Versuchsaufbau auf Deutsch",
                     en:"Experimental setup in English",
                     fr:"Configuration expérimentale en français",
-                    lu:"Versuchsaufbau auf Deutsch",
-                }
+                },
+                moreInfo:{
+                    de:"Mehr Informationen auf Deutsch",
+                    en:"More information in English",
+                    fr:"Plus d'informations en français",
+                },
+                element_id:1,
             }
         };
         
@@ -256,7 +260,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
         }));
     }
 
-    const SwitchLanguage = (ln:'en' | 'fr' | 'de' | 'lu')=>{
+    const SwitchLanguage = (ln:'en' | 'fr' | 'de' )=>{
         setAppData((prevData) => ({
             ...prevData,
             language: ln,
@@ -292,11 +296,26 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
         // Does element exist?
         
         if(appData.elements.find(e => e.id === element.id)){
-            // Update existing element
-            setAppData((prevData) => ({
-                ...prevData,
-                elements: prevData.elements.map(e => e.id === element.id ? element : e),
-            }));
+            // IF EXPERIMENT IS NULL, CREATE EXPERIMENT
+            if(appData.elements.find(e => e.id === element.id)?.experiment == null && element.experiment !== null){
+                let experiment_id = InsertExperimentIntoDataBase(element.experiment);
+                if(experiment_id !== 0){
+                    element.experiment.id = experiment_id ?? 0;
+                }
+            }
+            // Check if question exist if not create it and get id
+            if(element.questionHard?.id === 0){
+                // Insert question into DB and get ID
+                InsertQuestionIntoDataBase(element.questionHard);
+                // TODO
+            }
+            // Check if question exist if not create it and get id
+            if(element.questionEasy?.id === 0){
+                // Insert question into DB and get ID
+                InsertQuestionIntoDataBase(element.questionEasy);
+                // TODO
+            }
+
             UpdateElementIntoDataBase(element);
             ClosePopUp();
             return;
@@ -310,6 +329,59 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
        
         ClosePopUp();
     };
+
+    const InsertExperimentIntoDataBase = (experiment:any)=>{
+        if(experiment===null){
+            return 0;
+        }
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            params:{
+            }
+        };
+    
+        let payload = {
+            action: "INSERT_EXPERIMENT",
+            experiment: experiment,
+        };
+    
+        axios.post("https://app.script.lu/goe/dbConnection.php" ,payload,config).then((res)=>{
+            return res.data["experiment_id"];
+        }).catch((error)=>{
+            console.log("Error inserting Experiment into DB",error);
+            return 0;
+        });
+    }
+
+    const InsertQuestionIntoDataBase = (question:question | null)=>{
+        if(question===null){
+            return;
+        }
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            params:{
+            }
+        };
+    
+        let payload = {
+            action: "INSERT_QUESTION",
+            question: question,
+        };
+    
+        axios.post("https://app.script.lu/goe/dbConnection.php" ,payload,config).then((res)=>{
+            console.log("Question inserted into DB:", res.data);
+            return res.data["question_id"];
+        }).catch((error)=>{
+            console.log("Error inserting Question into DB",error);
+            return 0;
+        });
+    }
 
     const CardToggleExpand = (id:number)=>{
         setAppData((prevData) => ({
@@ -340,9 +412,9 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
             element.questionEasy = {
                 id: 0,
                 element_id: element.id,
-                text: {"de":"","en":"","fr":"","lu":""},
+                text: {"de":"","en":"","fr":""},
                 difficulty: 'easy',
-                answer: {"de":"","en":"","fr":"","lu":""},
+                answer: {"de":"","en":"","fr":""},
                 isDefault: true,
             } as question;
         }
@@ -350,9 +422,9 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
             element.questionHard = {
                 id: 0,
                 element_id: element.id,
-                text: {"de":"","en":"","fr":"","lu":""},
+                text: {"de":"","en":"","fr":""},
                 difficulty: 'hard',
-                answer: {"de":"","en":"","fr":"","lu":""},
+                answer: {"de":"","en":"","fr":""},
                 isDefault: true,
             } as question;
         }
@@ -371,7 +443,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
             user_id: appData.user?.id ?? 1,
         };
     
-        axios.post("https://dev.script.lu/research-n-dev/goe/dbConnection.php" ,payload,config).then((res)=>{
+        axios.post("https://app.script.lu/goe/dbConnection.php" ,payload,config).then((res)=>{
             console.log("Element inserted into DB:", res.data);
         }).catch((error)=>{
             console.log("Error inserting Element into DB");
@@ -392,8 +464,13 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
             element: element,
         };
     
-        axios.post("https://dev.script.lu/research-n-dev/goe/dbConnection.php" ,payload,config).then((res)=>{
+        axios.post("https://app.script.lu/goe/dbConnection.php" ,payload,config).then((res)=>{
             console.log("Element updated into DB:", res.data);
+            // Update existing element only if database return 200
+            setAppData((prevData) => ({
+                ...prevData,
+                elements: prevData.elements.map(e => e.id === element.id ? element : e),
+            }));
         }).catch((error)=>{
             console.log("Error updating Element into DB");
         });
