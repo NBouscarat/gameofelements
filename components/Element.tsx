@@ -18,7 +18,6 @@ export default function Element({ route,element}: { route?: string; element: ele
 
   const HandleClick = ()=>{
     SelectElement(element.id);
-    console.log("Navigating to /elements",element.id);
     router.push(`/elements`);
   }
 

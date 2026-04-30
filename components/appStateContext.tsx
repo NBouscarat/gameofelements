@@ -8,7 +8,7 @@ import crypto from 'crypto';
 
 interface AppState {
     appData: AppData;
-    GetUser: (IAMHashed:string)=>void;
+    GetUser: ()=>void;
     OpenPopUp: (element:element, popUpType:popUpTypes)=>void;
     ClosePopUp: ()=>void;
     SwitchLanguage: (ln:'en' | 'fr' | 'de')=>void;
@@ -26,7 +26,7 @@ const initialAppData: AppData = {
     error: null,
     start: false,
     user: null,
-    language: 'en',
+    language: 'de',
     elements:[],
     popUpOpen: false,
     popUpType: null,
@@ -45,32 +45,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
     
     //const GA4 = ReactGA4.initialize("G-KZ2ENR9329");
 
-    const GetUser = (IAMHashed : string)=>{
-        //decrypt IAM
-        let iam = ""; // For testing purposes only
-        try {
-            // Clé secrète utilisée pour le chiffrement (doit être identique à celle utilisée dans PHP)
-            const secretKey = 'GameOfElements'; // Remplacez par votre clé secrète forte
-            const iv = crypto.createHash('sha256').update(secretKey).digest('hex').substr(0, 16); // IV dérivé de la clé
-      
-            // Déchiffrer le nameId
-            const decipher = crypto.createDecipheriv('aes-256-cbc', crypto.createHash('sha256').update(secretKey).digest(), iv);
-            let decryptedNameId = decipher.update(decodeURIComponent(IAMHashed), 'base64', 'utf8');
-            decryptedNameId += decipher.final('utf8');
-      
-            // Retourner le nameId déchiffré
-            iam = decryptedNameId;
-          } catch (error) {
-            console.error('Error decrypting IAM:', error);
-          }
-        
-        // IF IAM is Empty redirect to login page
-        if(!iam){
-            console.log("No IAM found, redirect to login page");
-            iam = "bouni204"; // For testing purposes only
-            //return;
-        }
-        
+    const GetUser = ()=>{
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -79,34 +54,58 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
                
             }
         };
-      
-        let payload = {
-            action: "GET_USER_BY_IAM",
-            iam: iam,
-        };
-        axios.post("https://app.script.lu/goe/dbConnection.php" ,payload,config).then((res)=>{
-            console.log("User Data from API:", res.data);
+        let iam: string | null = null;
+        let isTeacher = false;
+        let payload = null;
+        //get IAM from URL parameter iam and t
+        axios.post('https://app.script.lu/goe/data.php',payload,config).then((res)=>{
+            console.log("User IAM raw data:", res.data);
+       
+            iam = res.data["urn:oid:0.9.2342.19200300.100.1.1"][0] ?? null;
+            res.data["MEN-Affilation"].map((affil:string)=>{
+                if(affil.toLowerCase().includes("teacher")){
+                    isTeacher = true;
+                }
+            });
+            console.log("User IAM:", iam, "Is Teacher:", isTeacher);
+            // IF IAM is Empty redirect to login page
+            if(!iam){
+                console.log("No IAM found, redirect to login page");
+                window.location.href = "https://app.script.lu/simplesaml/public/module.php/saml/sp/login/default-sp?ReturnTo=https://app.script.lu/goe";
+                
+                //iam = "bouni204"; // DEV MOD mock admin user
+            }
             
-            // SECURITY CHECK against forgery
-            if(res.data.iam === iam){
+            payload = {
+                action: "GET_USER_BY_IAM",
+                iam: iam,
+            };
+            axios.post("https://app.script.lu/goe/dbConnection.php" ,payload,config).then((res)=>{
+                console.log("User Data from API:", res.data);
+                
+                // SECURITY CHECK against forgery
+                if(res.data.iam === iam){
+                    setAppData((prevData) => ({
+                        ...prevData,
+                        user: res.data,
+                    }));
+                };
+            }).catch((error)=>{
+                console.log("Error getting User - DEV MOD mock admin ",error);
                 setAppData((prevData) => ({
                     ...prevData,
-                    user: res.data,
+                    user: {
+                        id: 1,
+                        iam: "bouni204",
+                        isAdmin: true,
+                        questions: [],
+                    },
                 }));
-            };
+            }); 
+
         }).catch((error)=>{
             console.log("Error getting User - DEV MOD mock admin ",error);
-            setAppData((prevData) => ({
-                ...prevData,
-                user: {
-                    id: 1,
-                    iam: "bouni204",
-                    isAdmin: true,
-                    questions: [],
-                },
-            }));
         });
-      
     };
 
     const GetDataFromAPI = ()=> {

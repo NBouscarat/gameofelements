@@ -11,11 +11,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressCard, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import crypto from "crypto";
 
-import { NextApiRequest, NextApiResponse } from "next";
 
-export default function Home(req: NextApiRequest, res: NextApiResponse) {
+export default function Home() {
   const { appData,GetUser, GetDataFromAPI, GetMockData,SwitchLanguage} = useGlobalState();
   const router = useRouter();
   
@@ -24,16 +22,10 @@ export default function Home(req: NextApiRequest, res: NextApiResponse) {
     const abortController = new AbortController();
     if(appData.initialized) return;
     if(appData.user == null){
-      if(req.method === 'GET'){
-        const { IAM } = req.query;
-        if (!IAM) {
-          return res.status(400).json({ error: 'Missing nameId parameter' });
-        }
-        GetUser(IAM as string);
+        // redirect to SAML Login page
+        GetUser();
         GetDataFromAPI();
       }
-     
-    }
     //GetMockData();
     
     return () => {
